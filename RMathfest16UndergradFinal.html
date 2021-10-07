@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The Wonders of Digital Art and Fractals</title>
+  <meta charset="utf-8">
+  <meta name="description" content="The Wonders of Digital Art and Fractals">
+  <meta name="author" content="Eric Lewis, Yanna Chen and Ricky Hardiyanto">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>The Wonders of Digital Art and Fractals</h1>
+    <h2>A Project on Visualizations Using R</h2>
+    <p>Eric Lewis, Yanna Chen and Ricky Hardiyanto<br/>Undergraduate Students at New York City College of Technology, CUNY</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <article data-timings="">
+    <script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+
+</script>
+
+<h2>Abstract</h2>
+
+<p>We will present some visualization projects by mixing programming, mathematics and experimentation to showcase some artistic creations that can be made with R. </p>
+
+<ul>
+<li>Digital Art
+
+<ul>
+<li>Surface Plots</li>
+<li>Heat Maps (requires package devtools)<br></li>
+<li>Contour Projections</li>
+</ul></li>
+<li>Fractals
+
+<ul>
+<li>Sierpinski Shapes</li>
+<li>Classical Chaotic Dynamical Systems</li>
+<li>Heighway Dragon</li>
+</ul></li>
+</ul>
+
+<p><strong>Supported by the Department of Education MSEIP grant # P120A150063</strong>
+Project Team: Eric Lewis, Yanna Chen, Ricky Hardiyanto and Boyan Kostadinov. </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Introduction</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><strong>What exactly are contour projections, surface plots, heat maps?</strong></p>
+
+<p>Heat maps are graphs where a matrix&#39;s individual values are denoted by colors. It is a 2D representation that uses colors to help explain relationships of data that would be easier to decipher than looking at a spreadsheet equivalent. 
+We will implement several functions to show these images. </p>
+
+<p><img src="http://i.imgur.com/KEhyBHO.gif" title="source: imgur.com" style="width:400px;height=400px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Introduction (continued)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><strong>What are fractals?</strong>
+Fractals are geometric figures that are self-similar across all of its scalar levels. That is to say that a smaller part of a fractal at different scales usually resembles the whole fractal. 
+We will implement several well-known recursive functions and dynamical systems to demonstrate fractals.</p>
+
+<p><img src="http://i.imgur.com/TiEY9vR.jpg" title="source: imgur.com" style="width:360px;height=360px;" /></a> <img src="http://i.imgur.com/esRUfti.jpg" title="source: imgur.com" style="width:300px;height=300px;" /></a> <img src="http://i.imgur.com/vHXR8U6.jpg" title="source: imgur.com" style="width:257px;height=257px;" /></a> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Methodology</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Our first goal is to make digital art.
+To do this we make a function z(X,Y) where we assign the independent variables X and Y with their corresponding vectors of possible values that we choose. Using the function z, we will generate the surface plots and heat maps which we will then overlay with our contour projections of two-dimensional surfaces.</p>
+
+<p>Our second goal is to make fractals without using the built-in R functions. To do this we will explain how to make a basic well-known fractal; The Sierpinksi Carpet. 
+To make the Sierpinski Carpet we will construct a matrix: </p>
+
+<p><img src="http://i.imgur.com/ojKquzC.png" title="source: imgur.com" style="width:300px;height=300px;"/></a></p>
+
+<p>After making this matrix, the idea will be to make a for-loop that can manipulate this matrix in such a way that when the recursive property is in-effect, each element A is treated just as the initial matrix f(A) has been treated.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    <h2>Analysis</h2>
+  </hgroup>
+  <article data-timings="">
+    <h4>Digital Art Through Surface Plots, Heat Maps and Contour Projections</h4>
+
+<p>Here we initialize the surface z to show the 12 points we will sample from.</p>
+
+<pre><code class="r">library(&quot;plot3D&quot;)         #required library for plots
+x &lt;- c(1,2,3,4)           #vector of x-values
+y &lt;- c(-1,0,1)            #vector of y-values
+z &lt;- 2*x + 5*y            #given function
+M &lt;- mesh(x,y)            #creates a rectangular full 2D or 3D grid
+(zz &lt;- 2*M$x + 5*M$y)     #Mesh in tandem with X &amp; Y to get our 12 points
+</code></pre>
+
+<pre><code>##      [,1] [,2] [,3]
+## [1,]   -3    2    7
+## [2,]   -1    4    9
+## [3,]    1    6   11
+## [4,]    3    8   13
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <article data-timings="">
+    <pre><code class="r">plot(M$x,M$y, xlim=c(0.5,4.5), ylim=c(-1.5,1.5), pch = 16, xlab=&quot;x-values&quot;, ylab=&quot;y-values&quot;)
+</code></pre>
+
+<p><img src="http://i.imgur.com/RwQLLLM.png" title="source: imgur.com" style="width:250px;height=250px;"/></a></p>
+
+<p>This is the plot of the actual surface we generate from the given vectors of X and Y.</p>
+
+<pre><code class="r">persp3D( M$x, M$y, zz,colvar=zz,colkey=FALSE,shade = 0.1,box=TRUE,theta=320) #plotting the surface
+</code></pre>
+
+<p><img src="http://i.imgur.com/1pr7OXr.png" title="source: imgur.com" style="width:250px;height=250px;"/></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-7" style="background:;">
+  <article data-timings="">
+    <p>This is the corresonding heat map of the matrix zz. As we can see colors are assigned to each number from the matrix to produce this heat map. Colors that are close to each other are indicative of close numbers.</p>
+
+<pre><code>##      [,1] [,2] [,3]
+## [1,]   -3    2    7
+## [2,]   -1    4    9
+## [3,]    1    6   11
+## [4,]    3    8   13
+</code></pre>
+
+<pre><code class="r">image(zz, axes=FALSE)
+</code></pre>
+
+<p><img src="http://i.imgur.com/xEXuxaP.png" title="source: imgur.com" style="width:250px;height=250px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-8" style="background:;">
+  <hgroup>
+    <h2>Analysis(cont.)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Now that we made a heat map in 2D we are going to up the ante and the dimension by one.
+We will be using the function <img src="http://i.imgur.com/AlFjTKO.jpg" title="source: imgur.com" style="width:250px;height=250px;" /></a> as our given function. Repeating the same steps as above we would generate a 3D heat map. To get a better descriptive look at the graphical interpretation of this function we must set the independent variables to all the variables within its domain. Since we are dealing with trig functions the domain is <img src="http://i.imgur.com/bo1ZhX5.jpg" title="source: imgur.com" style="width:100px;height=100px;" /></a></p>
+
+<p><img src="http://i.imgur.com/xahlPuO.png" title="source: imgur.com" style="width:800px;height=800px;" /></a></p>
+
+<p><img src="http://i.imgur.com/WXnHxi2.png" title="source: imgur.com" style="width:200px;height=200px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-9" style="background:;">
+  <hgroup>
+    <h2>Analysis(cont.)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>We will now use our proven methods our gerenating heat maps and contour plots to generate digital art.
+Our new function is: <img src="http://i.imgur.com/AlFjTKO.jpg" title="source: imgur.com" style="width:250px;height=250px;" /></a>.</p>
+
+<p>We will sample 27 points from the interval <img src="http://i.imgur.com/QNeySsR.jpg" title="source: imgur.com" style="width:100px;height=100px;" /></a> </p>
+
+<p><img src="http://i.imgur.com/jjtH6FJ.png" title="source: imgur.com" style="width:800px;height=800px;" /></a></p>
+
+<p><img src="http://i.imgur.com/LdvniQ5.png" title="source: imgur.com" style="width:200px;height=200px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-10" style="background:;">
+  <article data-timings="">
+    <p>We  show the aerial view of the function now added with contour plots to finish our digital art masterpiece.</p>
+
+<pre><code class="r">image2D(zz, axes=FALSE)
+contour2D(zz,add=TRUE,colkey=FALSE,drawlabels=FALSE,axes=FALSE,frame=TRUE)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    <h2>Analysis(cont.)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>We repeat the same steps as before this time using image() to plot the heat map. We also use contour() to superimpose the contour plot of z. Our new function is <img src="http://i.imgur.com/Uhs6eu9.jpg" title="source: imgur.com" style="width:250px;height=250px;" /></a></p>
+
+<p>We will sample 27 points from the interval <img src="http://i.imgur.com/Vozoe7P.jpg" title="source: imgur.com" style="width:100px;height=100px;" /></a>.</p>
+
+<p><img src="http://i.imgur.com/6kZDG8A.png" title="source: imgur.com" style="width:800px;height=800px;" /></a></p>
+
+<p><img src="http://i.imgur.com/kcjiX6u.png" title="source: imgur.com" style="width:200px;height=200px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-12" style="background:;">
+  <article data-timings="">
+    <pre><code class="r">image(zz,axes=FALSE)
+contour(zz,add=TRUE,colkey=FALSE,drawlabels=FALSE,axes=FALSE,frame=TRUE)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-12-1.png" alt="plot of chunk unnamed-chunk-12"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-13" style="background:;">
+  <hgroup>
+    <h2>Fractals</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="http://i.imgur.com/1GClod7.gif" title="source: imgur.com" style="width:200px;height=200px;" /></a></p>
+
+<p>To make the Sierpinksi Carpet we must first generate a matrix f(A).</p>
+
+<p><img src="http://i.imgur.com/SSDsCpX.png" title="source: imgur.com" style="width:200px;height=200px;" /></a></p>
+
+<p>An effective way to do this is with binding. R has built-in functions to bind elements by row and by column. We take advantage of this by using a couple of binds in quick-succesion. First we bind 3 copies of the element A by column to form a row of 3 elements of A. That will be our top row of our desired matrix. The middle element in the second row will eventually be our &quot;hole&quot; that we see through each of the iterations.
+To get the second row with a zero in the middle we do the same bind except that we multiply the middle element by 0. It must be multiplied and not just inputted as zero because if the element is a matrix, the act of multipliying by zero will count as multiplying by the zero matrix. </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-14" style="background:;">
+  <article data-timings="">
+    <p>We will first generate the matrix above which is the same as a Level 1 Sierpinski Carpet.</p>
+
+<p><img src="http://i.imgur.com/L9hNsif.png" title="source: imgur.com" style="width:700px;height=700px;" /></a>
+<img src="http://i.imgur.com/8Py3mnf.png" title="source: imgur.com" style="width:400px;height=400px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-15" style="background:;">
+  <article data-timings="">
+    <p>Now that we have the Level 1 Carpet we must add a (for-loop) that will allow us to add the recursion that will show the self-similar property that fractals are known for.</p>
+
+<p><img src="http://i.imgur.com/X61nIi8.png" title="source: imgur.com" style="width:700px;height=700px;" /></a>
+<img src="http://i.imgur.com/cK7LmKw.png" title="source: imgur.com" style="width:300px;height=300px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-16" style="background:;">
+  <article data-timings="">
+    <p>Level 6 Sierpinski Carpet:</p>
+
+<p><img src="assets/fig/unnamed-chunk-15-1.png" alt="plot of chunk unnamed-chunk-15"></p>
+
+<p>As you can see we manipulate recursion by changing the number of iteration in the (for-loop).
+Now that we know our function is reliable in finding fractals we get creative by manipulating the initial matrix f(A) solely to get various fractals. </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-17" style="background:;">
+  <article data-timings="">
+    <p>Level 6 Sierpinski Triangle &amp;
+Level 5 Sierpinski Snowflake</p>
+
+<p><img src="http://i.imgur.com/0FYtcU2.png" title="source: imgur.com" style="width:900px;height=900px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-18" style="background:;">
+  <hgroup>
+    <h2>Dynamical Systems</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Fractals can also be created by simulating different kinds of dynamical systems.</p>
+
+<p><img src="http://i.imgur.com/9LNakEu.png" title="source: imgur.com" style="width:600px;height=600px;" /></a>
+<img src="http://i.imgur.com/J9VH8MT.png" title="source: imgur.com" style="width:300px;height=300px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-19" style="background:;">
+  <article data-timings="">
+    <p>Here we use Euler&#39;s Method to simulate chaotic dynamical systems.</p>
+
+<pre><code class="r">library(&quot;rgl&quot;)
+
+LiSys &lt;- function(n, a=5, b=16, c=1, x0=5, y0=4, z0=10){
+  x&lt;-c(x0,rep(NA,n-1))
+  y&lt;-c(y0,rep(NA,n-1))
+  z&lt;-c(z0,rep(NA,n-1))
+  h&lt;-0.01
+  for (i in 2:n){
+    x[i] = x[i-1] + h*(a*(y[i-1]-x[i-1]))
+    y[i] = y[i-1] + h*(x[i-1]*z[i-1] - y[i-1])
+    z[i] = z[i-1] + h*(b - x[i-1]*y[i-1] - c*z[i-1])
+  }
+  require(rgl)
+  rgl.clear()
+  rgl.points(x,y,z, color=heat.colors(n), size=2)
+}
+LiSys(20000)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-20" style="background:;">
+  <hgroup>
+    <h2>Chaotic Dynamical Systems</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Li System</p>
+
+<p><img src="http://i.imgur.com/EtcNFmq.jpg" title="source: imgur.com" style="width:490px;height=490px;" /></a>
+<img src="http://i.imgur.com/fyXYKOq.jpg" title="source: imgur.com" style="width:275px;height=275px;" /></a>
+<img src="http://i.imgur.com/toJc5JZ.jpg" title="source: imgur.com" style="width:200px;height=200px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-21" style="background:;">
+  <article data-timings="">
+    <pre><code class="r">ThoSys &lt;- function(n, b=0.209, x0=0.5, y0=0.4, z0=0.8){
+  x&lt;-c(x0,rep(NA,n-1))
+  y&lt;-c(y0,rep(NA,n-1))
+  z&lt;-c(z0,rep(NA,n-1))
+  h&lt;-0.01
+  for (i in 2:n){
+    x[i] = x[i-1] + h*(sin(y[i-1]) - b*x[i-1])
+    y[i] = y[i-1] + h*(sin(z[i-1]) - b*y[i-1])
+    z[i] = z[i-1] + h*(sin(x[i-1]) - b*z[i-1])
+  }
+  require(rgl)
+  rgl.clear()
+  rgl.points(x,y,z, color=heat.colors(n), size=2)
+}
+
+ThoSys(20000)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-22" style="background:;">
+  <hgroup>
+    <h2>Chaotic Dynamical Systems</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Thomas System</p>
+
+<p><img src="http://i.imgur.com/zivlZsy.jpg" title="source: imgur.com" style="width:500px;height=500px;" /></a>
+<img src="http://i.imgur.com/cOxc5Dt.jpg" title="source: imgur.com" style="width:215px;height=215px;" /></a>
+<img src="http://i.imgur.com/vsMNiEF.jpg" title="source: imgur.com" style="width:200px;height=200px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-23" style="background:;">
+  <hgroup>
+    <h2>The Heighway Dragon</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The Fractal Dragon has many names, The Dragon Curve, The Heighway Dragon or even The Jurassic Park Fractal. It is very difficult to code but the concept is very easy to understand.</p>
+
+<p><img src="http://i.imgur.com/Ee6nc8A.png" title="source: imgur.com" style="width:800px;height=800px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-24" style="background:;">
+  <article data-timings="">
+    <p><img src="http://i.imgur.com/XtZlsHD.png" title="source: imgur.com" style="width:800px;height=800px;" /></a></p>
+
+<p><img src="http://i.imgur.com/RYzEjST.png" title="source: imgur.com" style="width:350px;height=350px;" /></a> Level 2</p>
+
+<p><img src="http://i.imgur.com/jSJDJnz.png" title="source: imgur.com" style="width:350px;height=350px;" /></a> Level 3</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-25" style="background:;">
+  <hgroup>
+    <h2>The Heighway Dragon - Level 15</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="http://i.imgur.com/qdK037g.png" title="source: imgur.com" style="width:800px;height=800px;" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-26" style="background:;">
+  <hgroup>
+    <h2>Conclusion</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>R is mainly known for its value in statistics and its number crunching abilities. However it is not well known that R is a software that you can use to make innovative designs. We used mathematics to show heat maps and fractals, both with ubiquitous application in the world. We have proved that R is a viable way to show these amazing artistic creations.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-27" style="background:;">
+  <hgroup>
+    <h2>References</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li>Fischer, Ericka. N.p., n.d. Web. 30 May 2016. <a href="https://www.pinterest.com/pin/301600506266463011/?from_navigate=true">https://www.pinterest.com/pin/301600506266463011/?from_navigate=true</a>.</li>
+<li>&quot;Dragon Curve.&quot; - Rosetta Code. N.p., n.d. Web. 01 Aug. 2016.</li>
+<li>Rouse, Margaret. &quot;Heat Map Definition.&quot; Search Business Analytics. N.p., n.d. Web. 30 May 2016. <a href="http://searchbusinessanalytics.techtarget.com/definition/heat-map">http://searchbusinessanalytics.techtarget.com/definition/heat-map</a>.
+Tom. &quot;What Are Fractals?&quot; Frax. N.p., n.d. Web. 30 May 2016. <a href="http://fract.al/background">http://fract.al/background</a>.</li>
+<li>Photographic, Warren. Image Library of Nature &amp; Pets. N.p., n.d. Web. 30 May 2016. <a href="http://www.warrenphotographic.co.uk/08811-ammonite">http://www.warrenphotographic.co.uk/08811-ammonite</a>.</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-28" style="background:;">
+  <article data-timings="">
+    <p><img src="http://i.imgur.com/1uEKrRt.jpg" title="source: imgur.com" /></a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='NA'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Introduction'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Introduction (continued)'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Methodology'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Analysis'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='NA'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='NA'>
+         7
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=8 title='Analysis(cont.)'>
+         8
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=9 title='Analysis(cont.)'>
+         9
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=10 title='NA'>
+         10
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=11 title='Analysis(cont.)'>
+         11
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=12 title='NA'>
+         12
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=13 title='Fractals'>
+         13
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=14 title='NA'>
+         14
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=15 title='NA'>
+         15
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=16 title='NA'>
+         16
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=17 title='NA'>
+         17
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=18 title='Dynamical Systems'>
+         18
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=19 title='NA'>
+         19
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=20 title='Chaotic Dynamical Systems'>
+         20
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=21 title='NA'>
+         21
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=22 title='Chaotic Dynamical Systems'>
+         22
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=23 title='The Heighway Dragon'>
+         23
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=24 title='NA'>
+         24
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=25 title='The Heighway Dragon - Level 15'>
+         25
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=26 title='Conclusion'>
+         26
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=27 title='References'>
+         27
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=28 title='NA'>
+         28
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
