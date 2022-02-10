@@ -1,7 +1,7 @@
 # The Wonders of Digital Art and Fractals 
 ## A Project on Visualizations Using R 
 Showed the teaching capabilities of R by making digital art and fractals from scratch. I also presented this as an undergrad at MATHFEST 2016 !!! =D
-
+ 
 ---
 ## Slideshow Presentation - (html file)
 WARNING : If clicking open the html file, make sure Browser is zoomed out and use Arrow Keys to navigate the slideshow.
